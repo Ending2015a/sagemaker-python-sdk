@@ -66,7 +66,7 @@ class Session(object):
     a naming convention which includes the current AWS account ID.
     """
 
-    def __init__(self, boto_session=None, sagemaker_client=None, sagemaker_runtime_client=None):
+    def __init__(self, boto_session=None, sagemaker_client=None, sagemaker_runtime_client=None, s3_client=None):
         """Initialize a SageMaker ``Session``.
 
         Args:
@@ -80,6 +80,7 @@ class Session(object):
                 If not provided, one will be created using this instance's ``boto_session``.
         """
         self._default_bucket = None
+        self.s3_client = s3_client
 
         sagemaker_config_file = os.path.join(os.path.expanduser('~'), '.sagemaker', 'config.yaml')
         if os.path.exists(sagemaker_config_file):

@@ -140,7 +140,7 @@ def validate_source_dir(script, directory):
 
 
 def tar_and_upload_dir(session, bucket, s3_key_prefix, script,
-                       directory=None, dependencies=None, kms_key=None):
+                       directory=None, dependencies=None, kms_key=None, s3_client=None):
     """Package source files and upload a compress tar file to S3. The S3 location will be
     ``s3://<bucket>/s3_key_prefix/sourcedir.tar.gz``.
 
@@ -187,7 +187,12 @@ def tar_and_upload_dir(session, bucket, s3_key_prefix, script,
         else:
             extra_args = None
 
-        session.resource('s3').Object(bucket, key).upload_file(tar_file, ExtraArgs=extra_args)
+        print(s3_client)
+        if s3_client == None:
+                s3_client = session.resource('s3')
+        else:
+                print("Using provided s3_client")
+        s3_client.Object(bucket, key).upload_file(tar_file, ExtraArgs=extra_args)
     finally:
         shutil.rmtree(tmp)
 

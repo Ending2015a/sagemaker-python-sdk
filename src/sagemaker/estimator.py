@@ -763,7 +763,7 @@ class Framework(EstimatorBase):
     MPI_CUSTOM_MPI_OPTIONS = 'sagemaker_mpi_custom_mpi_options'
 
     def __init__(self, entry_point, source_dir=None, hyperparameters=None, enable_cloudwatch_metrics=False,
-                 container_log_level=logging.INFO, code_location=None, image_name=None, dependencies=None, **kwargs):
+                 container_log_level=logging.INFO, code_location=None, image_name=None, dependencies=None,s3_client=None, **kwargs):
         """Base class initializer. Subclasses which override ``__init__`` should invoke ``super()``
 
         Args:
@@ -806,6 +806,7 @@ class Framework(EstimatorBase):
             **kwargs: Additional kwargs passed to the ``EstimatorBase`` constructor.
         """
         super(Framework, self).__init__(**kwargs)
+        self.sagemaker_session.s3_client = s3_client
         if entry_point.startswith('s3://'):
             raise ValueError('Invalid entry point script: {}. Must be a path to a local file.'.format(entry_point))
         self.entry_point = entry_point
@@ -883,13 +884,15 @@ class Framework(EstimatorBase):
             output_bucket, _ = parse_s3_url(self.output_path)
             kms_key = self.output_kms_key if code_bucket == output_bucket else None
 
+        print(self.sagemaker_session.s3_client)
         return tar_and_upload_dir(session=self.sagemaker_session.boto_session,
                                   bucket=code_bucket,
                                   s3_key_prefix=code_s3_prefix,
                                   script=self.entry_point,
                                   directory=self.source_dir,
                                   dependencies=self.dependencies,
-                                  kms_key=kms_key)
+                                  kms_key=kms_key,
+				  s3_client=self.sagemaker_session.s3_client)
 
     def _model_source_dir(self):
         """Get the appropriate value to pass as source_dir to model constructor on deploying

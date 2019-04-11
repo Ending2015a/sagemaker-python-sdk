@@ -33,7 +33,7 @@ from sagemaker.utils import name_from_image, secondary_training_status_changed, 
 
 logging.basicConfig()
 LOGGER = logging.getLogger('sagemaker')
-LOGGER.setLevel(logging.INFO)
+LOGGER.setLevel(logging.DEBUG)
 
 
 _STATUS_CODE_TABLE = {
@@ -159,7 +159,10 @@ class Session(object):
             key_suffix = name
 
         bucket = bucket or self.default_bucket()
-        s3 = self.boto_session.resource('s3')
+        if self.s3_client == None:
+            s3 = self.boto_session.resource('s3')
+        else:
+            s3 = self.s3_client
 
         for local_path, s3_key in files:
             s3.Object(bucket, s3_key).upload_file(local_path)
@@ -185,7 +188,10 @@ class Session(object):
         region = self.boto_session.region_name
         default_bucket = 'sagemaker-{}-{}'.format(region, account)
 
-        s3 = self.boto_session.resource('s3')
+        if self.s3_client == None:
+            s3 = self.boto_session.resource('s3')
+        else:
+            s3 = self.s3_client
         try:
             # 'us-east-1' cannot be specified because it is the default region:
             # https://github.com/boto/boto3/issues/125

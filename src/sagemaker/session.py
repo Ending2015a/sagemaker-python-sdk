@@ -83,6 +83,7 @@ class Session(object):
         self.s3_client = s3_client
 
         sagemaker_config_file = os.path.join(os.path.expanduser('~'), '.sagemaker', 'config.yaml')
+        print("Looking for config file: {}".format(sagemaker_config_file))
         if os.path.exists(sagemaker_config_file):
             self.config = yaml.load(open(sagemaker_config_file, 'r'))
         else:

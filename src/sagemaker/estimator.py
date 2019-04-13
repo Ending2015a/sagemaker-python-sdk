@@ -884,7 +884,6 @@ class Framework(EstimatorBase):
             output_bucket, _ = parse_s3_url(self.output_path)
             kms_key = self.output_kms_key if code_bucket == output_bucket else None
 
-        print(self.sagemaker_session.s3_client)
         return tar_and_upload_dir(session=self.sagemaker_session.boto_session,
                                   bucket=code_bucket,
                                   s3_key_prefix=code_s3_prefix,

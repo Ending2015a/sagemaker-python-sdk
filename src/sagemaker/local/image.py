@@ -123,6 +123,8 @@ class _SageMakerContainer(object):
             TRAINING_JOB_NAME_ENV_NAME: job_name,
 	    S3_ENDPOINT_URL_ENV_NAME: self.sagemaker_session.s3_client.meta.client._endpoint.host
         }
+        training_env_vars.update(self.sagemaker_session.environment_variables)
+
         compose_data = self._generate_compose_file('train', additional_volumes=volumes,
                                                    additional_env_vars=training_env_vars)
         compose_command = self._compose()

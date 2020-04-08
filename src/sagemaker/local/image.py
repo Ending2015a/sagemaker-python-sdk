@@ -48,6 +48,8 @@ DOCKER_COMPOSE_HTTP_TIMEOUT = '120'
 REGION_ENV_NAME = 'AWS_REGION'
 TRAINING_JOB_NAME_ENV_NAME = 'TRAINING_JOB_NAME'
 S3_ENDPOINT_URL_ENV_NAME = 'S3_ENDPOINT_URL'
+SAGEMAKER_NETWORK = os.environ.get('SAGEMAKER_NETWORK', 'sagemaker-local')
+
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.WARNING)
@@ -409,7 +411,7 @@ class _SageMakerContainer(object):
             'version': '2.3',
             'services': services,
             'networks': {
-                'sagemaker-local': {'name': 'sagemaker-local'}
+                str(SAGEMAKER_NETWORK): {'name': str(SAGEMAKER_NETWORK)}
             }
         }
 
@@ -451,7 +453,7 @@ class _SageMakerContainer(object):
             'environment': environment,
             'command': command,
             'networks': {
-                'sagemaker-local': {
+                str(SAGEMAKER_NETWORK): {
                     'aliases': [host]
                 }
             }

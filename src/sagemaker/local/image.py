@@ -49,7 +49,7 @@ REGION_ENV_NAME = 'AWS_REGION'
 TRAINING_JOB_NAME_ENV_NAME = 'TRAINING_JOB_NAME'
 S3_ENDPOINT_URL_ENV_NAME = 'S3_ENDPOINT_URL'
 SAGEMAKER_NETWORK = os.environ.get('SAGEMAKER_NETWORK_NAME', 'sagemaker-local')
-
+CUDA_VISIBLE_DEVICES = os.environ.get('CUDA_VISIBLE_DEVICES', '0')
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.WARNING)
@@ -387,6 +387,9 @@ class _SageMakerContainer(object):
         additional_env_vars = additional_env_vars or {}
         environment = []
         optml_dirs = set()
+
+        if 'CUDA_VISIBLE_DEVICES' not in additional_env_vars:
+            additional_env_vars['CUDA_VISIBLE_DEVICES'] = CUDA_VISIBLE_DEVICES
 
         aws_creds = _aws_credentials(boto_session)
         if aws_creds is not None:
